@@ -50,7 +50,7 @@ form?.addEventListener('submit', async (e) => {
 
 // Scroll fade-in for cards
 const fadeEls = document.querySelectorAll(
-  '.service-card, .why__item, .process__step, .portfolio__placeholder'
+  '.service-card, .why__item, .process__step, .portfolio__card, .pricing__card'
 );
 fadeEls.forEach(el => {
   el.style.cssText += 'opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease';
