@@ -1,14 +1,14 @@
-// Scroll progress bar
+// ── SCROLL PROGRESS BAR ──
 const progressBar = document.createElement('div');
 progressBar.className = 'scroll-progress';
 document.body.prepend(progressBar);
 
 window.addEventListener('scroll', () => {
-  const scrolled = window.scrollY / (document.body.offsetHeight - window.innerHeight);
-  progressBar.style.width = `${Math.min(scrolled * 100, 100)}%`;
+  const pct = window.scrollY / (document.body.offsetHeight - window.innerHeight);
+  progressBar.style.width = `${Math.min(pct * 100, 100)}%`;
 }, { passive: true });
 
-// Cursor glow (desktop only)
+// ── CURSOR GLOW (desktop only) ──
 if (!('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches) {
   const glow = document.createElement('div');
   glow.className = 'cursor-glow';
@@ -19,7 +19,7 @@ if (!('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches)
   }, { passive: true });
 }
 
-// Canvas particle system in hero
+// ── HERO CANVAS PARTICLE NETWORK ──
 (function initHeroCanvas() {
   const hero = document.querySelector('.hero');
   if (!hero) return;
@@ -28,9 +28,7 @@ if (!('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches)
   canvas.id = 'hero-canvas';
   hero.prepend(canvas);
   const ctx = canvas.getContext('2d');
-
-  let particles = [];
-  let W, H;
+  let particles = [], W, H;
 
   function resize() {
     W = canvas.width  = hero.offsetWidth;
@@ -40,14 +38,14 @@ if (!('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches)
   class Dot {
     constructor() { this.reset(true); }
     reset(anywhere) {
-      this.x  = Math.random() * W;
-      this.y  = anywhere ? Math.random() * H : (Math.random() > 0.5 ? -4 : H + 4);
-      this.vx = (Math.random() - 0.5) * 0.25;
-      this.vy = (Math.random() - 0.5) * 0.25;
-      this.r  = Math.random() * 1.4 + 0.4;
-      this.base = Math.random() * 0.5 + 0.15;
+      this.x     = Math.random() * W;
+      this.y     = anywhere ? Math.random() * H : (Math.random() > .5 ? -4 : H + 4);
+      this.vx    = (Math.random() - .5) * 0.22;
+      this.vy    = (Math.random() - .5) * 0.22;
+      this.r     = Math.random() * 1.3 + 0.4;
+      this.base  = Math.random() * 0.45 + 0.1;
       this.phase = Math.random() * Math.PI * 2;
-      this.speed = Math.random() * 0.018 + 0.006;
+      this.speed = Math.random() * 0.018 + 0.005;
     }
     update() {
       this.x += this.vx;
@@ -59,7 +57,7 @@ if (!('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches)
       const a = this.base * (0.45 + 0.55 * Math.sin(this.phase));
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(245,197,24,${a})`;
+      ctx.fillStyle = `rgba(129,140,248,${a})`;
       ctx.fill();
     }
   }
@@ -70,8 +68,8 @@ if (!('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches)
     particles = Array.from({ length: count }, () => new Dot());
   }
 
-  const LINK_DIST = 110;
-  function draw() {
+  const LINK = 120;
+  function frame() {
     ctx.clearRect(0, 0, W, H);
     for (let i = 0; i < particles.length; i++) {
       particles[i].update();
@@ -80,17 +78,17 @@ if (!('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches)
         const dx = particles[i].x - particles[j].x;
         const dy = particles[i].y - particles[j].y;
         const d  = Math.hypot(dx, dy);
-        if (d < LINK_DIST) {
+        if (d < LINK) {
           ctx.beginPath();
-          ctx.strokeStyle = `rgba(245,197,24,${0.055 * (1 - d / LINK_DIST)})`;
-          ctx.lineWidth = 0.6;
+          ctx.strokeStyle = `rgba(129,140,248,${0.06 * (1 - d / LINK)})`;
+          ctx.lineWidth = 0.5;
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
           ctx.stroke();
         }
       }
     }
-    requestAnimationFrame(draw);
+    requestAnimationFrame(frame);
   }
 
   let resizeTimer;
@@ -100,10 +98,10 @@ if (!('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches)
   }, { passive: true });
 
   init();
-  draw();
+  frame();
 })();
 
-// Animated counters for stats
+// ── ANIMATED STAT COUNTERS ──
 (function initCounters() {
   document.querySelectorAll('.stats__num').forEach(el => {
     const raw = el.textContent.trim();
@@ -117,10 +115,10 @@ if (!('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches)
       entries.forEach(e => {
         if (!e.isIntersecting) return;
         obs.unobserve(el);
-        const t0 = performance.now();
+        const t0  = performance.now();
         const dur = 1600;
         function tick(now) {
-          const p = Math.min((now - t0) / dur, 1);
+          const p     = Math.min((now - t0) / dur, 1);
           const eased = 1 - Math.pow(1 - p, 3);
           el.textContent = Math.round(eased * target) + suffix;
           if (p < 1) requestAnimationFrame(tick);
@@ -133,28 +131,16 @@ if (!('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches)
   });
 })();
 
-// Mobile nav
-const burger = document.getElementById('burger');
-const navLinks = document.querySelector('.nav__links');
-burger?.addEventListener('click', () => navLinks?.classList.toggle('open'));
-document.querySelectorAll('.nav__links a').forEach(link =>
-  link.addEventListener('click', () => navLinks?.classList.remove('open'))
-);
-
-// Nav style on scroll
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  nav?.classList.toggle('nav--scrolled', window.scrollY > 40);
-}, { passive: true });
-
-// Staggered reveal on scroll
+// ── SCROLL REVEAL ──
 const revealTargets = [
-  { selector: '.service-card',    delay: 80  },
-  { selector: '.why__item',       delay: 80  },
-  { selector: '.process__step',   delay: 120 },
-  { selector: '.portfolio__card', delay: 100 },
-  { selector: '.pricing__card',   delay: 100 },
-  { selector: '.stats__item',     delay: 60  },
+  { selector: '.service-card',      delay: 80  },
+  { selector: '.why__item',         delay: 80  },
+  { selector: '.process__step',     delay: 120 },
+  { selector: '.portfolio__card',   delay: 100 },
+  { selector: '.pricing__card',     delay: 100 },
+  { selector: '.stats__item',       delay: 60  },
+  { selector: '.testimonial__card', delay: 100 },
+  { selector: '.faq__item',         delay: 60  },
 ];
 
 revealTargets.forEach(({ selector, delay }) => {
@@ -164,24 +150,80 @@ revealTargets.forEach(({ selector, delay }) => {
   });
 });
 
-const revealObserver = new IntersectionObserver((entries) => {
+const revealObs = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       e.target.classList.add('visible');
-      revealObserver.unobserve(e.target);
+      revealObs.unobserve(e.target);
     }
   });
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
-// Section headers fade in
 document.querySelectorAll('.section__header, .cta-bar__inner').forEach(el => {
   el.classList.add('reveal');
-  revealObserver.observe(el);
+  revealObs.observe(el);
 });
 
-// Contact form async submit
+// ── FAQ ACCORDION ──
+document.querySelectorAll('.faq__item').forEach(item => {
+  const btn = item.querySelector('.faq__q');
+  const ans = item.querySelector('.faq__a');
+
+  btn.addEventListener('click', () => {
+    const isOpen = item.classList.contains('open');
+
+    // Close all other items
+    document.querySelectorAll('.faq__item.open').forEach(other => {
+      if (other !== item) {
+        other.classList.remove('open');
+        other.querySelector('.faq__q').setAttribute('aria-expanded', 'false');
+        const otherAns = other.querySelector('.faq__a');
+        otherAns.style.maxHeight = otherAns.scrollHeight + 'px';
+        requestAnimationFrame(() => { otherAns.style.maxHeight = '0'; });
+        setTimeout(() => { otherAns.hidden = true; otherAns.style.maxHeight = ''; }, 320);
+      }
+    });
+
+    if (isOpen) {
+      item.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      ans.style.maxHeight = ans.scrollHeight + 'px';
+      requestAnimationFrame(() => { ans.style.maxHeight = '0'; });
+      setTimeout(() => { ans.hidden = true; ans.style.maxHeight = ''; }, 320);
+    } else {
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+      ans.hidden = false;
+      ans.style.maxHeight = '0';
+      requestAnimationFrame(() => { ans.style.maxHeight = ans.scrollHeight + 'px'; });
+      setTimeout(() => { ans.style.maxHeight = ''; }, 320);
+    }
+  });
+});
+
+// Smooth FAQ answer transition via CSS
+document.querySelectorAll('.faq__a').forEach(el => {
+  el.style.overflow  = 'hidden';
+  el.style.transition = 'max-height .32s cubic-bezier(.4,0,.2,1)';
+});
+
+// ── MOBILE NAV ──
+const burger   = document.getElementById('burger');
+const navLinks = document.querySelector('.nav__links');
+burger?.addEventListener('click', () => navLinks?.classList.toggle('open'));
+document.querySelectorAll('.nav__links a').forEach(link =>
+  link.addEventListener('click', () => navLinks?.classList.remove('open'))
+);
+
+// ── NAV SCROLL STYLE ──
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav?.classList.toggle('nav--scrolled', window.scrollY > 40);
+}, { passive: true });
+
+// ── CONTACT FORM ──
 const form = document.getElementById('contactForm');
 form?.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -198,7 +240,7 @@ form?.addEventListener('submit', async (e) => {
     });
     if (res.ok) {
       btn.textContent = 'Message Sent!';
-      btn.style.background = '#00C8B8';
+      btn.style.background = '#22c55e';
       btn.style.color = '#000';
       form.reset();
     } else {
@@ -206,7 +248,7 @@ form?.addEventListener('submit', async (e) => {
     }
   } catch {
     btn.textContent = 'Failed — Try WhatsApp';
-    btn.style.background = '#c0392b';
+    btn.style.background = '#ef4444';
     btn.style.color = '#fff';
   }
 
