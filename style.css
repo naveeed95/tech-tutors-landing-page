@@ -167,6 +167,17 @@ body::before {
   object-fit: contain;
   border-radius: 8px;
 }
+.nav__logo-text {
+  font-family: var(--font-head);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  background: linear-gradient(135deg, var(--white) 0%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+}
 .nav__links {
   display: flex;
   gap: 28px;
@@ -1321,6 +1332,18 @@ body::before {
   padding-bottom: 56px;
 }
 .footer__logo { height: 36px; width: auto; object-fit: contain; border-radius: 8px; margin-bottom: 20px; }
+.footer__brand-name {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  background: linear-gradient(135deg, var(--white) 0%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
 .footer__brand p { font-size: 14px; color: var(--muted); max-width: 260px; line-height: 1.8; }
 .footer__links h4 {
   font-family: var(--font-head);
