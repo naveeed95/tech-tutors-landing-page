@@ -1,1 +1,7 @@
 .vercel
+
+# Cold email agent — secrets and runtime data
+agents/cold_email/.env
+agents/cold_email/sent_log.csv
+agents/cold_email/leads.csv
+
